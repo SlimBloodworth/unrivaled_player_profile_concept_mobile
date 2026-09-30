@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { View, Image, Text, TouchableOpacity, Animated, ActivityIndicator } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts } from 'expo-font';
 
 const SECTION_HEIGHT = 308;
@@ -12,6 +11,7 @@ const COLORS = {
   drawerBackground: 'rgba(0,0,0,0.35)',
   white: '#fff',
   whiteSoft: 'rgba(255,255,255,0.9)',
+  pageBackground: '#17181c',
 };
 
 function PlayerScreen() {
@@ -20,6 +20,7 @@ function PlayerScreen() {
 
   const [fontsLoaded] = useFonts({
     RobotoMono: require('../../assets/fonts/RobotoMono-VariableFont_wght.ttf'),
+    'RobotoMono-Bold': require('../../assets/fonts/RobotoMono-Bold.ttf'),
   });
 
   const toggleMenu = () => {
@@ -115,19 +116,16 @@ function PlayerScreen() {
   }
 
   const headerTextStyle = {
-    fontFamily: 'RobotoMono',
+    fontFamily: 'RobotoMono-Bold',
     fontSize: 16,
     fontWeight: '500',
     color: COLORS.white,
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
   };
 
   return (
-    <LinearGradient
-      colors={[COLORS.brandBlue, COLORS.brandPurple]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={{ flex: 1 }}
-    >
+    <View style={{ flex: 1, backgroundColor: COLORS.pageBackground }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 16 }}>
         <View style={{ flex: 1 }} />
         <Image
@@ -155,9 +153,42 @@ function PlayerScreen() {
             paddingHorizontal: 24,
           }}
         >
-          <Text style={{ fontFamily: 'RobotoMono', fontSize: 18, color: COLORS.white, paddingVertical: 16 }}>Home</Text>
-          <Text style={{ fontFamily: 'RobotoMono', fontSize: 18, color: COLORS.white, paddingVertical: 16 }}>Tour</Text>
-          <Text style={{ fontFamily: 'RobotoMono', fontSize: 18, color: COLORS.white, paddingVertical: 16 }}>Players</Text>
+          <Text
+            style={{
+              fontFamily: 'RobotoMono-Bold',
+              fontSize: 18,
+              color: COLORS.white,
+              paddingVertical: 16,
+              textTransform: 'uppercase',
+              letterSpacing: 1.5,
+            }}
+          >
+            Home
+          </Text>
+          <Text
+            style={{
+              fontFamily: 'RobotoMono-Bold',
+              fontSize: 18,
+              color: COLORS.white,
+              paddingVertical: 16,
+              textTransform: 'uppercase',
+              letterSpacing: 1.5,
+            }}
+          >
+            Tour
+          </Text>
+          <Text
+            style={{
+              fontFamily: 'RobotoMono-Bold',
+              fontSize: 18,
+              color: COLORS.white,
+              paddingVertical: 16,
+              textTransform: 'uppercase',
+              letterSpacing: 1.5,
+            }}
+          >
+            Players
+          </Text>
         </View>
       )}
 
@@ -171,10 +202,40 @@ function PlayerScreen() {
             <Text style={headerTextStyle}>{'<'}</Text>
           </TouchableOpacity>
           <View style={{ flex: 1, alignItems: 'center' }}>
-            <Text style={{ fontFamily: 'RobotoMono', fontSize: 16, color: COLORS.white }}>Gabby Williams</Text>
+            <Text
+              numberOfLines={1}
+              style={{
+                fontFamily: 'RobotoMono-Bold',
+                fontSize: 16,
+                color: COLORS.white,
+                textTransform: 'uppercase',
+                letterSpacing: 1.5,
+              }}
+            >
+              Gabby Williams
+            </Text>
           </View>
-          <TouchableOpacity>
-            <Text style={headerTextStyle}>Follow</Text>
+          <TouchableOpacity
+            style={{
+              paddingVertical: 6,
+              paddingHorizontal: 14,
+              borderRadius: 16,
+              backgroundColor: COLORS.pageBackground,
+              borderWidth: 1.5,
+              borderColor: COLORS.white,
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: 'RobotoMono-Bold',
+                fontSize: 12,
+                color: COLORS.white,
+                textTransform: 'uppercase',
+                letterSpacing: 1,
+              }}
+            >
+              Follow
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -311,7 +372,7 @@ function PlayerScreen() {
           </View>
         </View>
       </Animated.ScrollView>
-    </LinearGradient>
+    </View>
   );
 }
 
