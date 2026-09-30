@@ -171,7 +171,7 @@ function PlayerScreen() {
             <Text style={headerTextStyle}>{'<'}</Text>
           </TouchableOpacity>
           <View style={{ flex: 1, alignItems: 'center' }}>
-            <Text style={{ fontFamily: 'RobotoMono', fontSize: 16, color: COLORS.white }}>Caitlin Clark</Text>
+            <Text style={{ fontFamily: 'RobotoMono', fontSize: 16, color: COLORS.white }}>Gabby Williams</Text>
           </View>
           <TouchableOpacity>
             <Text style={headerTextStyle}>Follow</Text>
