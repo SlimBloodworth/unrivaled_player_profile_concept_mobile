@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, Image, Text, TouchableOpacity, Animated, ActivityIndicator } from 'react-native';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // How tall the fixed "stage" box is on screen (holds the crossfading images + stats).
 const STAGE_HEIGHT = 340;
@@ -31,6 +32,7 @@ function PlayerScreen() {
   // items just highlights them for now — no real navigation is wired up yet.
   const [activeTab, setActiveTab] = useState('players');
   const stageScrollY = useRef(new Animated.Value(0)).current;
+  const insets = useSafeAreaInsets();
 
   const [fontsLoaded] = useFonts({
     RobotoMono: require('../../assets/fonts/RobotoMono-VariableFont_wght.ttf'),
@@ -136,7 +138,7 @@ function PlayerScreen() {
         <View style={{ flex: 1 }} />
       </View>
 
-      <View style={{ flex: 1, paddingHorizontal: 16, paddingBottom: 90 }}>
+      <View style={{ flex: 1, paddingHorizontal: 16, paddingBottom: 90 + insets.bottom }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14 }}>
           <TouchableOpacity>
             <Text style={headerTextStyle}>{'<'}</Text>
@@ -368,7 +370,7 @@ function PlayerScreen() {
           justifyContent: 'space-around',
           alignItems: 'center',
           paddingTop: 10,
-          paddingBottom: 24,
+          paddingBottom: 10 + insets.bottom,
           backgroundColor: COLORS.pageBackground,
           borderTopWidth: 1,
           borderTopColor: COLORS.brandBlue,
