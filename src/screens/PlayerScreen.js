@@ -11,7 +11,6 @@ const STAGE_STEP = 300;
 
 const COLORS = {
   brandBlue: '#5dc3ec',
-  brandPurple: '#591a7e',
   white: '#fff',
   whiteSoft: 'rgba(255,255,255,0.9)',
   pageBackground: '#17181c',
@@ -25,6 +24,22 @@ const NAV_ITEMS = [
   { key: 'clubs', label: 'Clubs', icon: 'shield', iconOutline: 'shield-outline' },
   { key: 'players', label: 'Players', icon: 'people', iconOutline: 'people-outline' },
   { key: 'more', label: 'More', icon: 'ellipsis-horizontal', iconOutline: 'ellipsis-horizontal-outline' },
+];
+
+// The 3 player photos, in display order. Metro needs require() paths written
+// literally (not built from a variable), so each call stays spelled out here —
+// only the fact that they're collected into one array is what's new.
+const IMAGE_SOURCES = [
+  require('../../assets/player/gabby-williams-france-removebg.png'),
+  require('../../assets/player/gabby-williams-crossover-removebg.png'),
+  require('../../assets/player/gabby-williams-layup1-removebg.png'),
+];
+
+// The 3 stats, in the same order as the images, with which side each one sits on.
+const STAT_ITEMS = [
+  { text: 'PPG: 27.5', side: 'left' },
+  { text: 'APG: 8.2', side: 'right' },
+  { text: 'RPG: 6.1', side: 'left' },
 ];
 
 function PlayerScreen() {
@@ -44,6 +59,10 @@ function PlayerScreen() {
     { useNativeDriver: true }
   );
 
+  // Every animated value in the stage (image opacity/scale, stat position, dots)
+  // follows the same "fade in, hold, fade out" shape across one STAGE_STEP window
+  // per index — these five helpers are called inline per item instead of being
+  // pre-assigned to separate named variables for each of the 3 images/stats/dots.
   const getOpacity = (index) =>
     stageScrollY.interpolate({
       inputRange: [(index - 1) * STAGE_STEP, index * STAGE_STEP, (index + 1) * STAGE_STEP],
@@ -86,30 +105,6 @@ function PlayerScreen() {
       extrapolate: 'clamp',
     });
 
-  const image1Opacity = getOpacity(0);
-  const image2Opacity = getOpacity(1);
-  const image3Opacity = getOpacity(2);
-
-  const image1Scale = getScale(0);
-  const image2Scale = getScale(1);
-  const image3Scale = getScale(2);
-
-  const stat1TranslateY = getTranslateY(0);
-  const stat2TranslateY = getTranslateY(1);
-  const stat3TranslateY = getTranslateY(2);
-
-  const stat1Opacity = getStatOpacity(0);
-  const stat2Opacity = getStatOpacity(1);
-  const stat3Opacity = getStatOpacity(2);
-
-  const stat1TranslateX = getTranslateX(0, 'left');
-  const stat2TranslateX = getTranslateX(1, 'right');
-  const stat3TranslateX = getTranslateX(2, 'left');
-
-  const dot1Opacity = getDotOpacity(0);
-  const dot2Opacity = getDotOpacity(1);
-  const dot3Opacity = getDotOpacity(2);
-
   if (!fontsLoaded) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -129,7 +124,7 @@ function PlayerScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.pageBackground }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 16 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 14 + insets.top, paddingBottom: 14, paddingHorizontal: 16 }}>
         <View style={{ flex: 1 }} />
         <Image
           source={require('../../assets/branding/unrivaled-icon.png')}
@@ -139,7 +134,7 @@ function PlayerScreen() {
       </View>
 
       <View style={{ flex: 1, paddingHorizontal: 16, paddingBottom: 90 + insets.bottom }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 }}>
           <TouchableOpacity>
             <Text style={headerTextStyle}>{'<'}</Text>
           </TouchableOpacity>
@@ -157,28 +152,7 @@ function PlayerScreen() {
               Gabby Williams
             </Text>
           </View>
-          <TouchableOpacity
-            style={{
-              paddingVertical: 6,
-              paddingHorizontal: 14,
-              borderRadius: 16,
-              backgroundColor: COLORS.pageBackground,
-              borderWidth: 1.5,
-              borderColor: COLORS.white,
-            }}
-          >
-            <Text
-              style={{
-                fontFamily: 'RobotoMono-Bold',
-                fontSize: 12,
-                color: COLORS.white,
-                textTransform: 'uppercase',
-                letterSpacing: 1,
-              }}
-            >
-              Follow
-            </Text>
-          </TouchableOpacity>
+          <View style={{ width: 24 }} />
         </View>
 
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
@@ -187,7 +161,7 @@ function PlayerScreen() {
           </Text>
         </View>
 
-        <View style={{ marginTop: 20, marginBottom: 20 }}>
+        <View style={{ marginTop: 12, marginBottom: 12 }}>
           <Text
             style={{
               fontFamily: 'RobotoMono',
@@ -210,6 +184,31 @@ function PlayerScreen() {
           >
             Location: TBD    Watch: TBD    Get Tickets: TBD
           </Text>
+        </View>
+
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          <TouchableOpacity
+            style={{
+              paddingVertical: 6,
+              paddingHorizontal: 20,
+              borderRadius: 18,
+              backgroundColor: COLORS.pageBackground,
+              borderWidth: 1.5,
+              borderColor: COLORS.white,
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: 'RobotoMono-Bold',
+                fontSize: 13,
+                color: COLORS.white,
+                textTransform: 'uppercase',
+                letterSpacing: 1,
+              }}
+            >
+              Follow Gabby
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* The "stage": one fixed box on screen. Images crossfade inside it and
@@ -240,121 +239,68 @@ function PlayerScreen() {
             }}
             pointerEvents="none"
           >
-            <Animated.Image
-              source={require('../../assets/player/gabby-williams-france-removebg.png')}
-              style={{
-                position: 'absolute',
-                width: 260,
-                height: 260,
-                resizeMode: 'contain',
-                opacity: image1Opacity,
-                transform: [{ scale: image1Scale }],
-              }}
-            />
-            <Animated.Image
-              source={require('../../assets/player/gabby-williams-crossover-removebg.png')}
-              style={{
-                position: 'absolute',
-                width: 260,
-                height: 260,
-                resizeMode: 'contain',
-                opacity: image2Opacity,
-                transform: [{ scale: image2Scale }],
-              }}
-            />
-            <Animated.Image
-              source={require('../../assets/player/gabby-williams-layup1-removebg.png')}
-              style={{
-                position: 'absolute',
-                width: 260,
-                height: 260,
-                resizeMode: 'contain',
-                opacity: image3Opacity,
-                transform: [{ scale: image3Scale }],
-              }}
-            />
+            {IMAGE_SOURCES.map((source, index) => (
+              <Animated.Image
+                key={index}
+                source={source}
+                style={{
+                  position: 'absolute',
+                  width: 260,
+                  height: 260,
+                  resizeMode: 'contain',
+                  opacity: getOpacity(index),
+                  transform: [{ scale: getScale(index) }],
+                }}
+              />
+            ))}
           </View>
 
           {/* Stats: pinned to the left or right edge of the stage, sliding in/out. */}
-          <Animated.View
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: '50%',
-              marginTop: -12,
-              width: 140,
-              opacity: stat1Opacity,
-              transform: [{ translateY: stat1TranslateY }, { translateX: stat1TranslateX }],
-            }}
-            pointerEvents="none"
-          >
-            <Text style={{ color: COLORS.white, fontFamily: 'RobotoMono', lineHeight: 20 }}>PPG: 27.5</Text>
-          </Animated.View>
-
-          <Animated.View
-            style={{
-              position: 'absolute',
-              right: 0,
-              top: '50%',
-              marginTop: -12,
-              width: 140,
-              opacity: stat2Opacity,
-              transform: [{ translateY: stat2TranslateY }, { translateX: stat2TranslateX }],
-            }}
-            pointerEvents="none"
-          >
-            <Text style={{ color: COLORS.white, fontFamily: 'RobotoMono', lineHeight: 20, textAlign: 'right' }}>
-              APG: 8.2
-            </Text>
-          </Animated.View>
-
-          <Animated.View
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: '50%',
-              marginTop: -12,
-              width: 140,
-              opacity: stat3Opacity,
-              transform: [{ translateY: stat3TranslateY }, { translateX: stat3TranslateX }],
-            }}
-            pointerEvents="none"
-          >
-            <Text style={{ color: COLORS.white, fontFamily: 'RobotoMono', lineHeight: 20 }}>RPG: 6.1</Text>
-          </Animated.View>
+          {STAT_ITEMS.map((stat, index) => (
+            <Animated.View
+              key={stat.text}
+              style={{
+                position: 'absolute',
+                [stat.side]: 0,
+                top: '50%',
+                marginTop: -12,
+                width: 140,
+                opacity: getStatOpacity(index),
+                transform: [
+                  { translateY: getTranslateY(index) },
+                  { translateX: getTranslateX(index, stat.side) },
+                ],
+              }}
+              pointerEvents="none"
+            >
+              <Text
+                style={{
+                  color: COLORS.white,
+                  fontFamily: 'RobotoMono',
+                  lineHeight: 20,
+                  textAlign: stat.side === 'right' ? 'right' : 'left',
+                }}
+              >
+                {stat.text}
+              </Text>
+            </Animated.View>
+          ))}
         </View>
 
-        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 12 }}>
-          <Animated.View
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: 4,
-              backgroundColor: COLORS.white,
-              marginHorizontal: 4,
-              opacity: dot1Opacity,
-            }}
-          />
-          <Animated.View
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: 4,
-              backgroundColor: COLORS.white,
-              marginHorizontal: 4,
-              opacity: dot2Opacity,
-            }}
-          />
-          <Animated.View
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: 4,
-              backgroundColor: COLORS.white,
-              marginHorizontal: 4,
-              opacity: dot3Opacity,
-            }}
-          />
+        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 8 }}>
+          {[0, 1, 2].map((index) => (
+            <Animated.View
+              key={index}
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: COLORS.white,
+                marginHorizontal: 4,
+                opacity: getDotOpacity(index),
+              }}
+            />
+          ))}
         </View>
       </View>
 
