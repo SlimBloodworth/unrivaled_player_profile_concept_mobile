@@ -1,89 +1,86 @@
 import React, { useState, useRef } from 'react';
 import { View, Image, Text, TouchableOpacity, Animated, ActivityIndicator } from 'react-native';
 import { useFonts } from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
 
-const SECTION_HEIGHT = 308;
+// How tall the fixed "stage" box is on screen (holds the crossfading images + stats).
+const STAGE_HEIGHT = 340;
+// How much drag distance inside the stage equals one full image-to-image transition.
+const STAGE_STEP = 300;
 
 const COLORS = {
   brandBlue: '#5dc3ec',
   brandPurple: '#591a7e',
-  glowPurple: 'rgba(127, 17, 224, 0.25)',
-  drawerBackground: 'rgba(0,0,0,0.35)',
   white: '#fff',
   whiteSoft: 'rgba(255,255,255,0.9)',
   pageBackground: '#17181c',
 };
 
+// Bottom nav: 4 core destinations + a "More" catch-all for everything else.
+// icon/iconOutline are Ionicons names; outline shows when inactive, filled when active.
+const NAV_ITEMS = [
+  { key: 'home', label: 'Home', icon: 'home', iconOutline: 'home-outline' },
+  { key: 'games', label: 'Games', icon: 'basketball', iconOutline: 'basketball-outline' },
+  { key: 'clubs', label: 'Clubs', icon: 'shield', iconOutline: 'shield-outline' },
+  { key: 'players', label: 'Players', icon: 'people', iconOutline: 'people-outline' },
+  { key: 'more', label: 'More', icon: 'ellipsis-horizontal', iconOutline: 'ellipsis-horizontal-outline' },
+];
+
 function PlayerScreen() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const scrollY = useRef(new Animated.Value(0)).current;
+  // Defaults to "players" since that's what this screen shows. Tapping other
+  // items just highlights them for now — no real navigation is wired up yet.
+  const [activeTab, setActiveTab] = useState('players');
+  const stageScrollY = useRef(new Animated.Value(0)).current;
 
   const [fontsLoaded] = useFonts({
     RobotoMono: require('../../assets/fonts/RobotoMono-VariableFont_wght.ttf'),
     'RobotoMono-Bold': require('../../assets/fonts/RobotoMono-Bold.ttf'),
   });
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
-
-  const handleScroll = Animated.event(
-    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+  const handleStageScroll = Animated.event(
+    [{ nativeEvent: { contentOffset: { y: stageScrollY } } }],
     { useNativeDriver: true }
   );
 
   const getOpacity = (index) =>
-    scrollY.interpolate({
-      inputRange: [
-        (index - 1) * SECTION_HEIGHT,
-        index * SECTION_HEIGHT,
-        (index + 1) * SECTION_HEIGHT,
-      ],
-      outputRange: [0.2, 1, 0.2],
+    stageScrollY.interpolate({
+      inputRange: [(index - 1) * STAGE_STEP, index * STAGE_STEP, (index + 1) * STAGE_STEP],
+      outputRange: [0, 1, 0],
       extrapolate: 'clamp',
     });
 
   const getTranslateY = (index) =>
-    scrollY.interpolate({
-      inputRange: [
-        (index - 1) * SECTION_HEIGHT,
-        index * SECTION_HEIGHT,
-        (index + 1) * SECTION_HEIGHT,
-      ],
+    stageScrollY.interpolate({
+      inputRange: [(index - 1) * STAGE_STEP, index * STAGE_STEP, (index + 1) * STAGE_STEP],
       outputRange: [50, 0, -30],
       extrapolate: 'clamp',
     });
 
   const getScale = (index) =>
-    scrollY.interpolate({
-      inputRange: [
-        (index - 1) * SECTION_HEIGHT,
-        index * SECTION_HEIGHT,
-        (index + 1) * SECTION_HEIGHT,
-      ],
+    stageScrollY.interpolate({
+      inputRange: [(index - 1) * STAGE_STEP, index * STAGE_STEP, (index + 1) * STAGE_STEP],
       outputRange: [0.96, 1.0, 0.98],
       extrapolate: 'clamp',
     });
 
   const getStatOpacity = (index) =>
-    scrollY.interpolate({
-      inputRange: [
-        (index - 1) * SECTION_HEIGHT,
-        index * SECTION_HEIGHT,
-        (index + 1) * SECTION_HEIGHT,
-      ],
-      outputRange: [0.3, 1, 0.3],
+    stageScrollY.interpolate({
+      inputRange: [(index - 1) * STAGE_STEP, index * STAGE_STEP, (index + 1) * STAGE_STEP],
+      outputRange: [0, 1, 0],
       extrapolate: 'clamp',
     });
 
   const getTranslateX = (index, side) =>
-    scrollY.interpolate({
-      inputRange: [
-        (index - 1) * SECTION_HEIGHT,
-        index * SECTION_HEIGHT,
-        (index + 1) * SECTION_HEIGHT,
-      ],
-      outputRange: side === 'left' ? [-10, 0, 10] : [10, 0, -10],
+    stageScrollY.interpolate({
+      inputRange: [(index - 1) * STAGE_STEP, index * STAGE_STEP, (index + 1) * STAGE_STEP],
+      outputRange: side === 'left' ? [-40, 0, 40] : [40, 0, -40],
+      extrapolate: 'clamp',
+    });
+
+  const getDotOpacity = (index) =>
+    stageScrollY.interpolate({
+      inputRange: [(index - 1) * STAGE_STEP, index * STAGE_STEP, (index + 1) * STAGE_STEP],
+      outputRange: [0.3, 1, 0.3],
       extrapolate: 'clamp',
     });
 
@@ -106,6 +103,10 @@ function PlayerScreen() {
   const stat1TranslateX = getTranslateX(0, 'left');
   const stat2TranslateX = getTranslateX(1, 'right');
   const stat3TranslateX = getTranslateX(2, 'left');
+
+  const dot1Opacity = getDotOpacity(0);
+  const dot2Opacity = getDotOpacity(1);
+  const dot3Opacity = getDotOpacity(2);
 
   if (!fontsLoaded) {
     return (
@@ -132,71 +133,10 @@ function PlayerScreen() {
           source={require('../../assets/branding/unrivaled-icon.png')}
           style={{ height: 48, resizeMode: 'contain' }}
         />
-        <View style={{ flex: 1, alignItems: 'flex-end' }}>
-          <TouchableOpacity onPress={toggleMenu} style={{ padding: 14 }}>
-            <Text style={headerTextStyle}>{menuOpen ? 'X' : '☰'}</Text>
-          </TouchableOpacity>
-        </View>
+        <View style={{ flex: 1 }} />
       </View>
 
-      {menuOpen && (
-        <View
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            bottom: 0,
-            width: '70%',
-            backgroundColor: COLORS.drawerBackground,
-            borderLeftWidth: 3,
-            borderLeftColor: COLORS.brandBlue,
-            paddingHorizontal: 24,
-          }}
-        >
-          <Text
-            style={{
-              fontFamily: 'RobotoMono-Bold',
-              fontSize: 18,
-              color: COLORS.white,
-              paddingVertical: 16,
-              textTransform: 'uppercase',
-              letterSpacing: 1.5,
-            }}
-          >
-            Home
-          </Text>
-          <Text
-            style={{
-              fontFamily: 'RobotoMono-Bold',
-              fontSize: 18,
-              color: COLORS.white,
-              paddingVertical: 16,
-              textTransform: 'uppercase',
-              letterSpacing: 1.5,
-            }}
-          >
-            Tour
-          </Text>
-          <Text
-            style={{
-              fontFamily: 'RobotoMono-Bold',
-              fontSize: 18,
-              color: COLORS.white,
-              paddingVertical: 16,
-              textTransform: 'uppercase',
-              letterSpacing: 1.5,
-            }}
-          >
-            Players
-          </Text>
-        </View>
-      )}
-
-      <Animated.ScrollView
-        style={{ flex: 1, paddingHorizontal: 16, paddingBottom: 40 }}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-      >
+      <View style={{ flex: 1, paddingHorizontal: 16, paddingBottom: 90 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14 }}>
           <TouchableOpacity>
             <Text style={headerTextStyle}>{'<'}</Text>
@@ -270,108 +210,197 @@ function PlayerScreen() {
           </Text>
         </View>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 36, marginBottom: 36, paddingTop: 12 }}>
-          <Animated.View
+        {/* The "stage": one fixed box on screen. Images crossfade inside it and
+            stats slide in/out from the sides, all driven by dragging inside this
+            box only — nothing above or below it moves. */}
+        <View style={{ height: STAGE_HEIGHT, marginTop: 16 }}>
+          {/* Invisible scroll track: captures the drag gesture, renders nothing itself. */}
+          <Animated.ScrollView
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+            contentContainerStyle={{ height: STAGE_HEIGHT + STAGE_STEP * 2 }}
+            onScroll={handleStageScroll}
+            scrollEventThrottle={16}
+            showsVerticalScrollIndicator={false}
+            snapToInterval={STAGE_STEP}
+            decelerationRate="fast"
+          />
+
+          {/* Images: all three stacked at the exact same spot, crossfading via opacity. */}
+          <View
             style={{
-              width: 140,
-              marginRight: 24,
-              opacity: stat1Opacity,
-              transform: [{ translateY: stat1TranslateY }, { translateX: stat1TranslateX }],
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
+            pointerEvents="none"
           >
-            <Text style={{ marginBottom: 7, color: COLORS.white, fontFamily: 'RobotoMono', lineHeight: 20 }}>PPG: 27.5</Text>
-          </Animated.View>
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <View
-              style={{
-                position: 'absolute',
-                width: 300,
-                height: 300,
-                borderRadius: 150,
-                backgroundColor: COLORS.glowPurple,
-              }}
-            />
             <Animated.Image
               source={require('../../assets/player/gabby-williams-france-removebg.png')}
               style={{
+                position: 'absolute',
                 width: 260,
-                resizeMode: 'contain',
                 height: 260,
+                resizeMode: 'contain',
                 opacity: image1Opacity,
                 transform: [{ scale: image1Scale }],
-              }}
-            />
-          </View>
-        </View>
-
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 36, paddingTop: 12 }}>
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <View
-              style={{
-                position: 'absolute',
-                width: 300,
-                height: 300,
-                borderRadius: 150,
-                backgroundColor: COLORS.glowPurple,
               }}
             />
             <Animated.Image
               source={require('../../assets/player/gabby-williams-crossover-removebg.png')}
               style={{
+                position: 'absolute',
                 width: 260,
-                resizeMode: 'contain',
                 height: 260,
+                resizeMode: 'contain',
                 opacity: image2Opacity,
                 transform: [{ scale: image2Scale }],
-              }}
-            />
-          </View>
-          <Animated.View
-            style={{
-              width: 140,
-              marginLeft: 24,
-              opacity: stat2Opacity,
-              transform: [{ translateY: stat2TranslateY }, { translateX: stat2TranslateX }],
-            }}
-          >
-            <Text style={{ marginBottom: 7, color: COLORS.white, fontFamily: 'RobotoMono', lineHeight: 20 }}>APG: 8.2</Text>
-          </Animated.View>
-        </View>
-
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 36, paddingTop: 12 }}>
-          <Animated.View
-            style={{
-              width: 140,
-              marginRight: 24,
-              opacity: stat3Opacity,
-              transform: [{ translateY: stat3TranslateY }, { translateX: stat3TranslateX }],
-            }}
-          >
-            <Text style={{ color: COLORS.white, fontFamily: 'RobotoMono', lineHeight: 20 }}>RPG: 6.1</Text>
-          </Animated.View>
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <View
-              style={{
-                position: 'absolute',
-                width: 300,
-                height: 300,
-                borderRadius: 150,
-                backgroundColor: COLORS.glowPurple,
               }}
             />
             <Animated.Image
               source={require('../../assets/player/gabby-williams-layup1-removebg.png')}
               style={{
+                position: 'absolute',
                 width: 260,
-                resizeMode: 'contain',
                 height: 260,
+                resizeMode: 'contain',
                 opacity: image3Opacity,
                 transform: [{ scale: image3Scale }],
               }}
             />
           </View>
+
+          {/* Stats: pinned to the left or right edge of the stage, sliding in/out. */}
+          <Animated.View
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: '50%',
+              marginTop: -12,
+              width: 140,
+              opacity: stat1Opacity,
+              transform: [{ translateY: stat1TranslateY }, { translateX: stat1TranslateX }],
+            }}
+            pointerEvents="none"
+          >
+            <Text style={{ color: COLORS.white, fontFamily: 'RobotoMono', lineHeight: 20 }}>PPG: 27.5</Text>
+          </Animated.View>
+
+          <Animated.View
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: '50%',
+              marginTop: -12,
+              width: 140,
+              opacity: stat2Opacity,
+              transform: [{ translateY: stat2TranslateY }, { translateX: stat2TranslateX }],
+            }}
+            pointerEvents="none"
+          >
+            <Text style={{ color: COLORS.white, fontFamily: 'RobotoMono', lineHeight: 20, textAlign: 'right' }}>
+              APG: 8.2
+            </Text>
+          </Animated.View>
+
+          <Animated.View
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: '50%',
+              marginTop: -12,
+              width: 140,
+              opacity: stat3Opacity,
+              transform: [{ translateY: stat3TranslateY }, { translateX: stat3TranslateX }],
+            }}
+            pointerEvents="none"
+          >
+            <Text style={{ color: COLORS.white, fontFamily: 'RobotoMono', lineHeight: 20 }}>RPG: 6.1</Text>
+          </Animated.View>
         </View>
-      </Animated.ScrollView>
+
+        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 12 }}>
+          <Animated.View
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: COLORS.white,
+              marginHorizontal: 4,
+              opacity: dot1Opacity,
+            }}
+          />
+          <Animated.View
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: COLORS.white,
+              marginHorizontal: 4,
+              opacity: dot2Opacity,
+            }}
+          />
+          <Animated.View
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: COLORS.white,
+              marginHorizontal: 4,
+              opacity: dot3Opacity,
+            }}
+          />
+        </View>
+      </View>
+
+      {/* Bottom nav bar: 4 core items + More. Tapping just highlights for now —
+          no real screen navigation is wired up yet. */}
+      <View
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          paddingTop: 10,
+          paddingBottom: 24,
+          backgroundColor: COLORS.pageBackground,
+          borderTopWidth: 1,
+          borderTopColor: COLORS.brandBlue,
+        }}
+      >
+        {NAV_ITEMS.map((item) => {
+          const isActive = activeTab === item.key;
+          return (
+            <TouchableOpacity
+              key={item.key}
+              onPress={() => setActiveTab(item.key)}
+              style={{ flex: 1, alignItems: 'center' }}
+            >
+              <Ionicons
+                name={isActive ? item.icon : item.iconOutline}
+                size={22}
+                color={isActive ? COLORS.white : COLORS.whiteSoft}
+              />
+              <Text
+                style={{
+                  fontFamily: 'RobotoMono',
+                  fontSize: 10,
+                  color: isActive ? COLORS.white : COLORS.whiteSoft,
+                  marginTop: 2,
+                }}
+              >
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 }
