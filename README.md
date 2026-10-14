@@ -8,6 +8,12 @@ that slides in from the side, with page-indicator dots and snap-to-image scrolli
 This project was built as a self-directed learning exercise and portfolio piece,
 and is not affiliated with or endorsed by Unrivaled Basketball.
 
+<p align="center">
+  <img src="docs/screenshot-ppg.png" alt="Player profile screen showing the first photo with the PPG stat" width="250">
+  <img src="docs/screenshot-apg.png" alt="Player profile screen showing the second photo with the APG stat" width="250">
+  <img src="docs/screenshot-rpg.png" alt="Player profile screen showing the third photo with the RPG stat" width="250">
+</p>
+
 ## Features
 
 - Fixed header with the Unrivaled logo, safe-area aware (clears notches/camera cutouts)
