@@ -14,6 +14,12 @@ and is not affiliated with or endorsed by Unrivaled Basketball.
   <img src="docs/screenshot-rpg.png" alt="Player profile screen showing the third photo with the RPG stat" width="250">
 </p>
 
+<p align="center">
+  <img src="docs/player-profile-demo.gif" alt="Screen recording of swiping through the three player photos, each crossfading in with its stat sliding in from the side" width="250">
+</p>
+
+<p align="center"><em>Swiping the photo area: each image crossfades in place while its stat slides in from the side.</em></p>
+
 ## Features
 
 - Fixed header with the Unrivaled logo, safe-area aware (clears notches/camera cutouts)
