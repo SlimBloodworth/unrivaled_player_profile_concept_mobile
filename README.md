@@ -36,7 +36,7 @@ and is not affiliated with or endorsed by Unrivaled Basketball.
 ## Tech Stack
 
 - [React Native](https://reactnative.dev/) — mobile app framework
-- [Expo](https://expo.dev/) (SDK 57) — build/run tooling and managed workflow
+- [Expo](https://expo.dev/) (SDK 58) — build/run tooling and managed workflow
 - [Expo Font](https://docs.expo.dev/versions/latest/sdk/font/) — loading custom typefaces
 - [Expo Vector Icons](https://docs.expo.dev/guides/icons/) (Ionicons) — bottom nav icons
 - [React Native Safe Area Context](https://github.com/th3rdwave/react-native-safe-area-context) — safe-area-aware layout
@@ -62,7 +62,8 @@ and is not affiliated with or endorsed by Unrivaled Basketball.
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) installed on your machine
+- [Node.js](https://nodejs.org/) installed on your machine (Expo SDK 58 requires 22.13 or newer
+  on the 22 line, 24.3 or newer on the 24 line, or 26 and later)
 - The [Expo Go](https://expo.dev/go) app installed on a physical iOS or Android phone
   (easiest way to preview), **or** Xcode (iOS Simulator) / Android Studio (Android Emulator)
   if you'd rather run it on a simulator
@@ -93,6 +94,13 @@ and is not affiliated with or endorsed by Unrivaled Basketball.
      runs through React Native Web — most of the UI renders the same, but the image
      gallery's drag-to-scroll interaction was built and tested for a touchscreen, so
      a mouse-drag may feel slightly different than it does on a phone.
+
+> **Expo Go version note:** Expo Go from the app stores only supports the newest Expo SDK,
+> and this project uses SDK 58. If Expo Go shows a "Project is incompatible with this version
+> of Expo Go" error (for example, after a newer SDK is released), either install the matching
+> Expo Go version for an Android device or simulator from [expo.dev/go](https://expo.dev/go),
+> or upgrade the project by following
+> [Expo's upgrade guide](https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/).
 
 ## Known Limitations / Next Steps
 
