@@ -9,6 +9,14 @@ const STAGE_HEIGHT = 340;
 // How much drag distance inside the stage equals one full image-to-image transition.
 const STAGE_STEP = 300;
 
+// The scroll positions (one STAGE_STEP apart) at which photo number `index` is
+// fading in, fully shown, and fading out. Shared by every animated value below.
+const stepRange = (index) => [
+  (index - 1) * STAGE_STEP,
+  index * STAGE_STEP,
+  (index + 1) * STAGE_STEP,
+];
+
 const COLORS = {
   brandBlue: '#5dc3ec',
   white: '#fff',
@@ -61,6 +69,28 @@ function PlayerScreen() {
 
   // Every animated value in the stage (image opacity/scale, stat position, dots)
   // follows the same "fade in, hold, fade out" shape across one STAGE_STEP window
+  // per index. stageInterpolate holds the parts they all share (the input range
+  // and clamping); each helper below only supplies its own output values.
+  const stageInterpolate = (index, outputRange) =>
+    stageScrollY.interpolate({
+      inputRange: stepRange(index),
+      outputRange,
+      extrapolate: 'clamp',
+    });
+
+  const getOpacity = (index) => stageInterpolate(index, [0, 1, 0]); // images and stats
+  const getScale = (index) => stageInterpolate(index, [0.96, 1.0, 0.98]);
+  const getTranslateY = (index) => stageInterpolate(index, [50, 0, -30]);
+  const getTranslateX = (index, side) =>
+    stageInterpolate(index, side === 'left' ? [-40, 0, 40] : [40, 0, -40]);
+  const getDotOpacity = (index) => stageInterpolate(index, [0.3, 1, 0.3]);
+
+  /* PREVIOUS VERSION, kept for reference: six separate helpers that each repeated
+     the same inputRange and clamp. getOpacity and getStatOpacity had become
+     identical (both [0, 1, 0]) once the ghosting fix removed their different floors.
+
+  // Every animated value in the stage (image opacity/scale, stat position, dots)
+  // follows the same "fade in, hold, fade out" shape across one STAGE_STEP window
   // per index — these five helpers are called inline per item instead of being
   // pre-assigned to separate named variables for each of the 3 images/stats/dots.
   const getOpacity = (index) =>
@@ -104,6 +134,7 @@ function PlayerScreen() {
       outputRange: [0.3, 1, 0.3],
       extrapolate: 'clamp',
     });
+  */
 
   if (!fontsLoaded) {
     return (
@@ -265,7 +296,7 @@ function PlayerScreen() {
                 top: '50%',
                 marginTop: -12,
                 width: 140,
-                opacity: getStatOpacity(index),
+                opacity: getOpacity(index), // was getStatOpacity(index)
                 transform: [
                   { translateY: getTranslateY(index) },
                   { translateX: getTranslateX(index, stat.side) },
