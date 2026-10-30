@@ -85,58 +85,7 @@ function PlayerScreen() {
     stageInterpolate(index, side === 'left' ? [-40, 0, 40] : [40, 0, -40]);
   const getDotOpacity = (index) => stageInterpolate(index, [0.3, 1, 0.3]);
 
-  /* PREVIOUS VERSION, kept for reference: six separate helpers that each repeated
-     the same inputRange and clamp. getOpacity and getStatOpacity had become
-     identical (both [0, 1, 0]) once the ghosting fix removed their different floors.
-
-  // Every animated value in the stage (image opacity/scale, stat position, dots)
-  // follows the same "fade in, hold, fade out" shape across one STAGE_STEP window
-  // per index — these five helpers are called inline per item instead of being
-  // pre-assigned to separate named variables for each of the 3 images/stats/dots.
-  const getOpacity = (index) =>
-    stageScrollY.interpolate({
-      inputRange: [(index - 1) * STAGE_STEP, index * STAGE_STEP, (index + 1) * STAGE_STEP],
-      outputRange: [0, 1, 0],
-      extrapolate: 'clamp',
-    });
-
-  const getTranslateY = (index) =>
-    stageScrollY.interpolate({
-      inputRange: [(index - 1) * STAGE_STEP, index * STAGE_STEP, (index + 1) * STAGE_STEP],
-      outputRange: [50, 0, -30],
-      extrapolate: 'clamp',
-    });
-
-  const getScale = (index) =>
-    stageScrollY.interpolate({
-      inputRange: [(index - 1) * STAGE_STEP, index * STAGE_STEP, (index + 1) * STAGE_STEP],
-      outputRange: [0.96, 1.0, 0.98],
-      extrapolate: 'clamp',
-    });
-
-  const getStatOpacity = (index) =>
-    stageScrollY.interpolate({
-      inputRange: [(index - 1) * STAGE_STEP, index * STAGE_STEP, (index + 1) * STAGE_STEP],
-      outputRange: [0, 1, 0],
-      extrapolate: 'clamp',
-    });
-
-  const getTranslateX = (index, side) =>
-    stageScrollY.interpolate({
-      inputRange: [(index - 1) * STAGE_STEP, index * STAGE_STEP, (index + 1) * STAGE_STEP],
-      outputRange: side === 'left' ? [-40, 0, 40] : [40, 0, -40],
-      extrapolate: 'clamp',
-    });
-
-  const getDotOpacity = (index) =>
-    stageScrollY.interpolate({
-      inputRange: [(index - 1) * STAGE_STEP, index * STAGE_STEP, (index + 1) * STAGE_STEP],
-      outputRange: [0.3, 1, 0.3],
-      extrapolate: 'clamp',
-    });
-  */
-
-  if (!fontsLoaded) {
+   if (!fontsLoaded) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator />
