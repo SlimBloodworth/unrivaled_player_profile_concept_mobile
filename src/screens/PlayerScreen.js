@@ -115,7 +115,11 @@ function PlayerScreen() {
 
       <View style={{ flex: 1, paddingHorizontal: 16, paddingBottom: 90 + insets.bottom }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 }}>
-          <TouchableOpacity>
+          <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+  onPress={() => {}} // placeholder until navigation exists
+          >
             <Text style={headerTextStyle}>{'<'}</Text>
           </TouchableOpacity>
           <View style={{ flex: 1, alignItems: 'center' }}>
