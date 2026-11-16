@@ -5,8 +5,10 @@ single player's profile. The centerpiece is a scroll-driven image "stage" — th
 player photos crossfade in place as the user swipes, each paired with a stat callout
 that slides in from the side, with page-indicator dots and snap-to-image scrolling.
 
-This project was built as a self-directed learning exercise and portfolio piece,
-and is not affiliated with or endorsed by Unrivaled Basketball.
+This project was built as a conceptual demo created solely for portfolio and interview purposes,
+and is not affiliated with or endorsed by Unrivaled Basketball or the WNBA.
+All logos and branding belong to Unrivaled.
+Player names and images belong to their respective owners.
 
 <p align="center">
   <img src="docs/screenshot-ppg.png" alt="Player profile screen showing the first photo with the PPG stat" width="250">
