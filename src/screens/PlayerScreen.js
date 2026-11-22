@@ -141,7 +141,7 @@ function PlayerScreen() {
 
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
           <Text style={{ fontFamily: 'RobotoMono', fontSize: 14, color: COLORS.whiteSoft }}>
-            Wing • Team TBD
+            Wing • Team Laces
           </Text>
         </View>
 
@@ -155,7 +155,7 @@ function PlayerScreen() {
               marginBottom: 6,
             }}
           >
-            Next Game: vs TBD    Date/Time: TBD
+            Next Game: Jan 8 / 11:30 PM ET
           </Text>
           <Text
             style={{
@@ -166,7 +166,7 @@ function PlayerScreen() {
               marginBottom: 6,
             }}
           >
-            Location: TBD    Watch: TBD    Get Tickets: TBD
+            Location: Inglewood, CA  Watch: TBD    Get Tickets: TBD
           </Text>
         </View>
 
